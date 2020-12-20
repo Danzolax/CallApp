@@ -5,11 +5,12 @@ import ru.zolax.callapp.database.entities.AccountEntity;
 import ru.zolax.callapp.ui.EntryForm;
 import ru.zolax.callapp.util.BaseForm;
 import ru.zolax.callapp.util.DialogUtil;
+import ru.zolax.callapp.util.SqlDump;
 
 
 import javax.swing.*;
 import java.sql.Connection;
-
+import java.util.Timer;
 public class Application
 {
     private static Application instance;
@@ -23,8 +24,14 @@ public class Application
 
         initUi();
         initDatabase();
+        initDumpService();
         new EntryForm();
 
+    }
+
+    private void initDumpService() {
+        Timer timer = new Timer();
+        timer.schedule(new SqlDump(),1,86_400_000);
     }
 
     public static AccountEntity getCurrentAccount() {
@@ -43,6 +50,7 @@ public class Application
             DialogUtil.showError("Ошибка подключения к бд");
             System.exit(-1);
         }
+
     }
 
     private void initUi()

@@ -2,8 +2,12 @@ package ru.zolax.callapp.database;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class MySqlDatabase {
     private final String address;
@@ -38,5 +42,23 @@ public class MySqlDatabase {
         source.setServerTimezone("Europe/Moscow");
         source.setUseSSL(false);
         return source.getConnection();
+    }
+
+    public String dump(){
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime now = LocalDateTime.now();
+        String beginPath = System.getProperty("user.dir");
+        String filePath = beginPath + "\\dump";
+        File file = new File(filePath, dtf.format(now) +".sql");
+        try {
+            if (file.createNewFile()){
+                System.out.println("File for dump is created");
+            } else{
+                System.out.println("File for dump exist");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "mysqldump -u "+user+" -p"+pass+" "+db+" -r "+"\"" +file + "\"";
     }
 }
